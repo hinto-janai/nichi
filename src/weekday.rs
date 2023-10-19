@@ -420,7 +420,15 @@ impl Weekday {
 	/// assert_eq!(Weekday::from_str("saturday").unwrap(), Weekday::Saturday);
 	/// ```
 	pub const fn from_str(s: &str) -> Option<Self> {
-		let bytes = s.as_bytes();
+		Self::from_bytes(s.as_bytes())
+	}
+
+	#[inline]
+	/// Same as [`Self::from_str`] but with bytes
+	///
+	/// ## Safety
+	/// `bytes` must be valid UTF-8.
+	pub const fn from_bytes(bytes: &[u8]) -> Option<Self> {
 		let len   = bytes.len();
 
 		if len < 3 || len > 9 {

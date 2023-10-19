@@ -105,8 +105,8 @@ impl Date {
 	///
 	/// ```rust
 	/// # use nichi::{Date,Weekday};
-	/// // US Independence day was on a Monday.
-	/// assert_eq!(Date::new(1776, 7, 1).weekday(), Weekday::Monday);
+	/// // US Independence day was on a Thursday.
+	/// assert_eq!(Date::new(1776, 7, 4).weekday(), Weekday::Thursday);
 	///
 	/// // Nintendo Switch was released on a Friday.
 	/// assert_eq!(Date::new(2017, 3, 3).weekday(), Weekday::Friday);
@@ -118,14 +118,20 @@ impl Date {
 	/// assert_eq!(Date::new(2018, 4, 25).weekday(), Weekday::Wednesday);
 	/// ```
 	pub const fn weekday(self) -> Weekday {
-		let month: isize = self.month.as_u8() as isize - 1;
+		Self::weekday_raw(self.year.inner(), self.month.inner(), self.day.inner())
+	}
+
+	#[inline]
+	/// Same as [`Date::weekday`] but with raw number primitives
+	pub const fn weekday_raw(year: u16, month: u8, day: u8) -> Weekday {
+		let month: isize = month as isize - 1;
 		debug_assert!(month >= 0);
 		debug_assert!(month < 12);
 
 		let year = if month < 2 {
-			self.year.0.saturating_sub(1)
+			year.saturating_sub(1)
 		} else {
-			self.year.0
+			year
 		};
 
 		const LUT: [u16; 12] = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
@@ -135,7 +141,7 @@ impl Date {
 		let lut: u16 = unsafe { std::ptr::read(LUT.as_ptr().offset(month)) };
 		debug_assert!(lut < 12);
 
-		let weekday: u16 = (year + year/4 - year/100 + year/400 + lut + self.day as u16) % 7;
+		let weekday: u16 = (year + year/4 - year/100 + year/400 + lut + day as u16) % 7;
 		debug_assert!(weekday < 7);
 
 		// SAFETY: indexing is not const, so we must
@@ -194,7 +200,7 @@ impl Date {
 	/// Create [`Date`] from a string
 	///
 	/// ## Invariants
-	/// - The year must be `1000..=65535`
+	/// - The year must be `1000..=9999`
 	/// - The month must be at least the first 3 letters of the month in english (`oct`, `Dec`, `SEP`, etc)
 	/// - The day must be a number, either optionally with a leading `0` or suffixed by `th`, `rd`, `nd`, `st` (but not both, e.g, `3rd` is OK, `03` is OK, `03rd` is INVALID)
 	///
@@ -227,6 +233,22 @@ impl Date {
 	/// 	Date::from_str("----fasdf decBR wef 25 a - >.a2010a...aa").unwrap(),
 	/// 	Date::new(2010, 12, 25),
 	/// );
+	/// ```
+	///
+	/// ## ISO 8601 (like)
+	/// This function also parses `ISO 8601`-like dates.
+	///
+	/// The `year`, `month`, and `day` must be available in that order.
+	///
+	/// A single separator character must exist, although it does not need to be `-`.
+	///
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Date::from_str("2010-12-25").unwrap(), Date::new(2010, 12, 25));
+	/// assert_eq!(Date::from_str("2010.02.02").unwrap(), Date::new(2010, 2, 2));
+	/// assert_eq!(Date::from_str("2010/2/2").unwrap(),   Date::new(2010, 2, 2));
+	/// assert_eq!(Date::from_str("2010_02_2").unwrap(),  Date::new(2010, 2, 2));
+	/// assert_eq!(Date::from_str("2010 2 02").unwrap(),  Date::new(2010, 2, 2));
 	/// ```
 	///
 	/// ## Examples
@@ -263,8 +285,61 @@ impl Date {
 		// Debug.
 		// println!("{s}");
 
+		// ISO 8601
+		static ISO: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1,2}.\d{1,2}").unwrap());
+		static ISO_1: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{2}.\d{2}").unwrap());
+		static ISO_2: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1}.\d{2}").unwrap());
+		static ISO_3: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{2}.\d{1}").unwrap());
+		static ISO_4: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1}.\d{1}").unwrap());
+
+		// If ISO matches, attempt that first.
+		if ISO.is_match(s) {
+			// Debug
+			// println!("iso {s}");
+
+			// xxxx-xx-xx
+			if let Some(m) = ISO_1.find(s) {
+				// println!("iso2 {m:?}");
+				let s = m.as_str();
+				let b = s.as_bytes();
+				let year  = s[0..4].parse::<u16>().unwrap();
+				let month = Month::from_bytes(&b[5..7]).unwrap();
+				let day   = Day::from_bytes(&b[8..10]).unwrap();
+				return Some(Self { year: Year(year), month, day })
+			// xxxx-x-xx
+			} else if let Some(m) = ISO_2.find(s) {
+				// println!("iso2 {m:?}");
+				let s = m.as_str();
+				let b = s.as_bytes();
+				let year  = s[0..4].parse::<u16>().unwrap();
+				let month = Month::from_bytes(&b[5..6]).unwrap();
+				let day   = Day::from_bytes(&b[7..9]).unwrap();
+				return Some(Self { year: Year(year), month, day })
+			// xxxx-xx-x
+			} else if let Some(m) = ISO_3.find(s) {
+				// println!("iso3 {m:?}");
+				let s = m.as_str();
+				let b = s.as_bytes();
+				let year  = s[0..4].parse::<u16>().unwrap();
+				let month = Month::from_bytes(&b[5..7]).unwrap();
+				let day   = Day::from_bytes(&b[8..9]).unwrap();
+				return Some(Self { year: Year(year), month, day })
+			// xxxx-x-x
+			} else if let Some(m) = ISO_4.find(s) {
+				// println!("iso4 {m:?}");
+				let s = m.as_str();
+				let b = s.as_bytes();
+				let year  = s[0..4].parse::<u16>().unwrap();
+				let month = Month::from_bytes(&b[5..6]).unwrap();
+				let day   = Day::from_bytes(&b[7..8]).unwrap();
+				return Some(Self { year: Year(year), month, day })
+			}
+
+			unreachable!("iso format matches but could not be parsed");
+		}
+
 		// Year.
-		static YEAR: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d{5}|\d{4})").unwrap());
+		static YEAR: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{4}").unwrap());
 		// Month.
 		static MONTH: Lazy<Regex> = Lazy::new(|| Regex::new(
 r"Jan|jan|JAN|Feb|feb|FEB|Mar|mar|MAR|Apr|apr|APR|Jun|jun|JUN|Jul|jul|JUL|Aug|aug|AUG|Sep|sep|SEP|Oct|oct|OCT|Nov|nov|NOV|Dec|dec|DEC"

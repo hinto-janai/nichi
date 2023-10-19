@@ -902,6 +902,7 @@ impl Day {
 		}
 	}
 
+	#[inline]
 	/// Create a [`Day`] by parsing a [`&str`]
 	///
 	/// Valid input strings are anything returned by
@@ -965,8 +966,15 @@ impl Day {
 	/// assert_eq!(Day::from_str("THIRTYFIRST").unwrap(), Day::ThirtyFirst);
 	/// ```
 	pub const fn from_str(s: &str) -> Option<Self> {
-		let bytes = s.as_bytes();
-		let len   = bytes.len();
+		Self::from_bytes(s.as_bytes())
+	}
+
+	/// Same as [`Self::from_str`] but from [`&[u8]`]
+	///
+	/// ## Safety
+	/// `bytes` must be valid UTF-8.
+	pub const fn from_bytes(bytes: &[u8]) -> Option<Self> {
+		let len = bytes.len();
 
 		if len == 0 {
 			return None;

@@ -415,6 +415,39 @@ impl Month {
 	#[inline]
 	/// ```rust
 	/// # use nichi::*;
+	/// assert_eq!(Month::January.as_str_num(),   "1");
+	/// assert_eq!(Month::February.as_str_num(),  "2");
+	/// assert_eq!(Month::March.as_str_num(),     "3");
+	/// assert_eq!(Month::April.as_str_num(),     "4");
+	/// assert_eq!(Month::May.as_str_num(),       "5");
+	/// assert_eq!(Month::June.as_str_num(),      "6");
+	/// assert_eq!(Month::July.as_str_num(),      "7");
+	/// assert_eq!(Month::August.as_str_num(),    "8");
+	/// assert_eq!(Month::September.as_str_num(), "9");
+	/// assert_eq!(Month::October.as_str_num(),   "10");
+	/// assert_eq!(Month::November.as_str_num(),  "11");
+	/// assert_eq!(Month::December.as_str_num(),  "12");
+	/// ```
+	pub const fn as_str_num(self) -> &'static str {
+		match self {
+			Self::January   => "1",
+			Self::February  => "2",
+			Self::March     => "3",
+			Self::April     => "4",
+			Self::May       => "5",
+			Self::June      => "6",
+			Self::July      => "7",
+			Self::August    => "8",
+			Self::September => "9",
+			Self::October   => "10",
+			Self::November  => "11",
+			Self::December  => "12",
+		}
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
 	/// assert_eq!(Month::January.as_str_jp(),   "一月");
 	/// assert_eq!(Month::February.as_str_jp(),  "二月");
 	/// assert_eq!(Month::March.as_str_jp(),     "三月");
@@ -466,8 +499,8 @@ impl Month {
 	/// assert_eq!(Weekday::from_str("sunday").unwrap(), Weekday::Sunday);
 	/// ```
 	///
+	/// ## `None`
 	/// If:
-	/// - `s.len() < 3`
 	/// - `s.len() > 9`
 	/// - The string could not be parsed
 	/// then this function will return `None`.
@@ -477,69 +510,81 @@ impl Month {
 	/// ## Examples
 	/// ```rust
 	/// # use nichi::*;
+	/// assert_eq!(Month::from_str("1").unwrap(),         Month::January);
 	/// assert_eq!(Month::from_str("January").unwrap(),   Month::January);
 	/// assert_eq!(Month::from_str("january").unwrap(),   Month::January);
 	/// assert_eq!(Month::from_str("JANUARY").unwrap(),   Month::January);
 	/// assert_eq!(Month::from_str("Jan").unwrap(),       Month::January);
 	/// assert_eq!(Month::from_str("jan").unwrap(),       Month::January);
 	/// assert_eq!(Month::from_str("JAN").unwrap(),       Month::January);
+	/// assert_eq!(Month::from_str("2").unwrap(),         Month::February);
 	/// assert_eq!(Month::from_str("February").unwrap(),  Month::February);
 	/// assert_eq!(Month::from_str("february").unwrap(),  Month::February);
 	/// assert_eq!(Month::from_str("FEBRUARY").unwrap(),  Month::February);
 	/// assert_eq!(Month::from_str("Feb").unwrap(),       Month::February);
 	/// assert_eq!(Month::from_str("feb").unwrap(),       Month::February);
 	/// assert_eq!(Month::from_str("FEB").unwrap(),       Month::February);
+	/// assert_eq!(Month::from_str("3").unwrap(),         Month::March);
 	/// assert_eq!(Month::from_str("March").unwrap(),     Month::March);
 	/// assert_eq!(Month::from_str("march").unwrap(),     Month::March);
 	/// assert_eq!(Month::from_str("MARCH").unwrap(),     Month::March);
 	/// assert_eq!(Month::from_str("Mar").unwrap(),       Month::March);
 	/// assert_eq!(Month::from_str("mar").unwrap(),       Month::March);
 	/// assert_eq!(Month::from_str("MAR").unwrap(),       Month::March);
+	/// assert_eq!(Month::from_str("4").unwrap(),         Month::April);
 	/// assert_eq!(Month::from_str("April").unwrap(),     Month::April);
 	/// assert_eq!(Month::from_str("april").unwrap(),     Month::April);
 	/// assert_eq!(Month::from_str("APRIL").unwrap(),     Month::April);
 	/// assert_eq!(Month::from_str("Apr").unwrap(),       Month::April);
 	/// assert_eq!(Month::from_str("apr").unwrap(),       Month::April);
 	/// assert_eq!(Month::from_str("APR").unwrap(),       Month::April);
+	/// assert_eq!(Month::from_str("5").unwrap(),         Month::May);
 	/// assert_eq!(Month::from_str("May").unwrap(),       Month::May);
 	/// assert_eq!(Month::from_str("may").unwrap(),       Month::May);
 	/// assert_eq!(Month::from_str("MAY").unwrap(),       Month::May);
+	/// assert_eq!(Month::from_str("6").unwrap(),         Month::June);
 	/// assert_eq!(Month::from_str("June").unwrap(),      Month::June);
 	/// assert_eq!(Month::from_str("june").unwrap(),      Month::June);
 	/// assert_eq!(Month::from_str("JUNE").unwrap(),      Month::June);
 	/// assert_eq!(Month::from_str("Jun").unwrap(),       Month::June);
 	/// assert_eq!(Month::from_str("jun").unwrap(),       Month::June);
 	/// assert_eq!(Month::from_str("JUN").unwrap(),       Month::June);
+	/// assert_eq!(Month::from_str("7").unwrap(),         Month::July);
 	/// assert_eq!(Month::from_str("July").unwrap(),      Month::July);
 	/// assert_eq!(Month::from_str("july").unwrap(),      Month::July);
 	/// assert_eq!(Month::from_str("JULY").unwrap(),      Month::July);
 	/// assert_eq!(Month::from_str("Jul").unwrap(),       Month::July);
 	/// assert_eq!(Month::from_str("jul").unwrap(),       Month::July);
 	/// assert_eq!(Month::from_str("JUL").unwrap(),       Month::July);
+	/// assert_eq!(Month::from_str("8").unwrap(),         Month::August);
 	/// assert_eq!(Month::from_str("August").unwrap(),    Month::August);
 	/// assert_eq!(Month::from_str("august").unwrap(),    Month::August);
 	/// assert_eq!(Month::from_str("AUGUST").unwrap(),    Month::August);
 	/// assert_eq!(Month::from_str("Aug").unwrap(),       Month::August);
 	/// assert_eq!(Month::from_str("aug").unwrap(),       Month::August);
 	/// assert_eq!(Month::from_str("AUG").unwrap(),       Month::August);
+	/// assert_eq!(Month::from_str("9").unwrap(),         Month::September);
 	/// assert_eq!(Month::from_str("September").unwrap(), Month::September);
 	/// assert_eq!(Month::from_str("september").unwrap(), Month::September);
 	/// assert_eq!(Month::from_str("SEPTEMBER").unwrap(), Month::September);
 	/// assert_eq!(Month::from_str("Sep").unwrap(),       Month::September);
 	/// assert_eq!(Month::from_str("sep").unwrap(),       Month::September);
 	/// assert_eq!(Month::from_str("SEP").unwrap(),       Month::September);
+	/// assert_eq!(Month::from_str("10").unwrap(),        Month::October);
 	/// assert_eq!(Month::from_str("October").unwrap(),   Month::October);
 	/// assert_eq!(Month::from_str("october").unwrap(),   Month::October);
 	/// assert_eq!(Month::from_str("OCTOBER").unwrap(),   Month::October);
 	/// assert_eq!(Month::from_str("Oct").unwrap(),       Month::October);
 	/// assert_eq!(Month::from_str("oct").unwrap(),       Month::October);
 	/// assert_eq!(Month::from_str("OCT").unwrap(),       Month::October);
+	/// assert_eq!(Month::from_str("11").unwrap(),        Month::November);
 	/// assert_eq!(Month::from_str("November").unwrap(),  Month::November);
 	/// assert_eq!(Month::from_str("november").unwrap(),  Month::November);
 	/// assert_eq!(Month::from_str("NOVEMBER").unwrap(),  Month::November);
 	/// assert_eq!(Month::from_str("Nov").unwrap(),       Month::November);
 	/// assert_eq!(Month::from_str("nov").unwrap(),       Month::November);
 	/// assert_eq!(Month::from_str("NOV").unwrap(),       Month::November);
+	/// assert_eq!(Month::from_str("12").unwrap(),        Month::December);
 	/// assert_eq!(Month::from_str("December").unwrap(),  Month::December);
 	/// assert_eq!(Month::from_str("december").unwrap(),  Month::December);
 	/// assert_eq!(Month::from_str("DECEMBER").unwrap(),  Month::December);
@@ -548,10 +593,35 @@ impl Month {
 	/// assert_eq!(Month::from_str("DEC").unwrap(),       Month::December);
 	/// ```
 	pub const fn from_str(s: &str) -> Option<Self> {
-		let bytes = s.as_bytes();
-		let len   = bytes.len();
+		Self::from_bytes(s.as_bytes())
+	}
 
-		if len < 3 || len > 9 {
+	/// Same as [`Self::from_str`] but from [`&[u8]`]
+	///
+	/// ## Safety
+	/// `bytes` must be valid UTF-8.
+	pub const fn from_bytes(bytes: &[u8]) -> Option<Self> {
+		let len = bytes.len();
+
+		if len < 3 {
+			return match bytes {
+				b"1"  | b"01" => Some(Self::January),
+				b"2"  | b"02" => Some(Self::February),
+				b"3"  | b"03" => Some(Self::March),
+				b"4"  | b"04" => Some(Self::April),
+				b"5"  | b"05" => Some(Self::May),
+				b"6"  | b"06" => Some(Self::June),
+				b"7"  | b"07" => Some(Self::July),
+				b"8"  | b"08" => Some(Self::August),
+				b"9"  | b"09" => Some(Self::September),
+				b"10"         => Some(Self::October),
+				b"11"         => Some(Self::November),
+				b"12"         => Some(Self::December),
+				_ => None,
+			}
+		}
+
+		if len > 9 {
 			return None;
 		}
 
