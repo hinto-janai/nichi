@@ -2,8 +2,17 @@
 name = "nichi"
 version = "0.1.0"
 edition = "2021"
+authors = ["hinto.janai <hinto.janai@protonmail.com>"]
+description = "Date library"
+documentation = "https://docs.rs/nichi"
+repository = "https://github.com/hinto-janai/nichi"
+readme = "README.md"
+keywords = ["date", "weekday", "month", "day", "year"]
+license = "MIT"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
 
 [features]
 default = ["serde", "bincode"]
