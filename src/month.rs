@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------------------- Use
 use crate::macros::{
-	impl_u8_enum,
+	impl_u8_enum,impl_traits,
 };
 
 //---------------------------------------------------------------------------------------------------- Month
@@ -24,6 +24,11 @@ pub enum Month {
 	October   = 10,
 	November  = 11,
 	December  = 12,
+}
+
+impl_traits!{ Month => u8 |
+	u8,u16,u32,u64,u128,usize |
+	i8,i16,i32,i64,i128,isize
 }
 
 //---------------------------------------------------------------------------------------------------- Impl
@@ -408,6 +413,39 @@ impl Month {
 	}
 
 	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Month::January.as_str_jp(),   "一月");
+	/// assert_eq!(Month::February.as_str_jp(),  "二月");
+	/// assert_eq!(Month::March.as_str_jp(),     "三月");
+	/// assert_eq!(Month::April.as_str_jp(),     "四月");
+	/// assert_eq!(Month::May.as_str_jp(),       "五月");
+	/// assert_eq!(Month::June.as_str_jp(),      "六月");
+	/// assert_eq!(Month::July.as_str_jp(),      "七月");
+	/// assert_eq!(Month::August.as_str_jp(),    "八月");
+	/// assert_eq!(Month::September.as_str_jp(), "九月");
+	/// assert_eq!(Month::October.as_str_jp(),   "十月");
+	/// assert_eq!(Month::November.as_str_jp(),  "十一月");
+	/// assert_eq!(Month::December.as_str_jp(),  "十二月");
+	/// ```
+	pub const fn as_str_jp(self) -> &'static str {
+		match self {
+			Self::January   => "一月",
+			Self::February  => "二月",
+			Self::March     => "三月",
+			Self::April     => "四月",
+			Self::May       => "五月",
+			Self::June      => "六月",
+			Self::July      => "七月",
+			Self::August    => "八月",
+			Self::September => "九月",
+			Self::October   => "十月",
+			Self::November  => "十一月",
+			Self::December  => "十二月",
+		}
+	}
+
+	#[inline]
 	/// Create a [`Weekday`] by parsing a [`&str`]
 	///
 	/// A valid input string can either be the first 3 letters of the day (returned from [`Weekday::as_str_short`])
@@ -532,6 +570,39 @@ impl Month {
 			b"December"  | b"december"  | b"DECEMBER"  | b"Dec" | b"dec" | b"DEC" => Some(Self::December),
 
 			_ => None,
+		}
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Month::January.inner(),   1);
+	/// assert_eq!(Month::February.inner(),  2);
+	/// assert_eq!(Month::March.inner(),     3);
+	/// assert_eq!(Month::April.inner(),     4);
+	/// assert_eq!(Month::May.inner(),       5);
+	/// assert_eq!(Month::June.inner(),      6);
+	/// assert_eq!(Month::July.inner(),      7);
+	/// assert_eq!(Month::August.inner(),    8);
+	/// assert_eq!(Month::September.inner(), 9);
+	/// assert_eq!(Month::October.inner(),   10);
+	/// assert_eq!(Month::November.inner(),  11);
+	/// assert_eq!(Month::December.inner(),  12);
+	/// ```
+	pub const fn inner(self) -> u8 {
+		match self {
+			Self::January   => 1,
+			Self::February  => 2,
+			Self::March     => 3,
+			Self::April     => 4,
+			Self::May       => 5,
+			Self::June      => 6,
+			Self::July      => 7,
+			Self::August    => 8,
+			Self::September => 9,
+			Self::October   => 10,
+			Self::November  => 11,
+			Self::December  => 12,
 		}
 	}
 }

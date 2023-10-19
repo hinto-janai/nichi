@@ -1,6 +1,6 @@
 [package]
 name = "nichi"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["hinto.janai <hinto.janai@protonmail.com>"]
 description = "Date library"
@@ -20,3 +20,6 @@ default = ["serde", "bincode"]
 [dependencies]
 serde = { version = "1.0.189", features = ["derive"], optional = true }
 bincode = { version = "2.0.0-rc.3", features = ["derive"], optional = true }
+derive_more = "0.99.17"
+regex = "1.10.2"
+once_cell = "1.18.0"

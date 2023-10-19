@@ -300,6 +300,29 @@ impl Weekday {
 	}
 
 	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Weekday::Sunday.as_str_jp(),    "日曜日");
+	/// assert_eq!(Weekday::Monday.as_str_jp(),    "月曜日");
+	/// assert_eq!(Weekday::Tuesday.as_str_jp(),   "火曜日");
+	/// assert_eq!(Weekday::Wednesday.as_str_jp(), "水曜日");
+	/// assert_eq!(Weekday::Thursday.as_str_jp(),  "木曜日");
+	/// assert_eq!(Weekday::Friday.as_str_jp(),    "金曜日");
+	/// assert_eq!(Weekday::Saturday.as_str_jp(),  "土曜日");
+	/// ```
+	pub const fn as_str_jp(self) -> &'static str {
+		match self {
+			Self::Sunday    => "日曜日",
+			Self::Monday    => "月曜日",
+			Self::Tuesday   => "火曜日",
+			Self::Wednesday => "水曜日",
+			Self::Thursday  => "木曜日",
+			Self::Friday    => "金曜日",
+			Self::Saturday  => "土曜日",
+		}
+	}
+
+	#[inline]
 	/// Create a [`Weekday`] by parsing a [`&str`]
 	///
 	/// A valid input string can either be the first 3 letters of the day (returned from [`Weekday::as_str_short`])

@@ -10,7 +10,7 @@ use nichi::*;
 // PartialEq.
 let date1 = Date::new(2000, 12, 25);
 let date2 = Date::new_typed(
-	2000,
+	Year(2000_u16),
 	Month::December,
 	Day::TwentyFifth,
 );

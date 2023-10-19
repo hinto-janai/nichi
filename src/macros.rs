@@ -94,3 +94,41 @@ macro_rules! impl_from_u8_enum {
     }
 }
 pub(crate) use impl_from_u8_enum;
+
+macro_rules! impl_traits {
+	(
+		$t:ty => $inner:ty |
+		$($u:ty),* |
+		$($i:ty),*
+	) => {
+		$(
+		impl PartialEq<$u> for $t {
+			fn eq(&self, other: &$u) -> bool {
+				self.inner() == (*other as $inner)
+			}
+		}
+		impl PartialEq<$i> for $t {
+			fn eq(&self, other: &$i) -> bool {
+				if other.is_negative() {
+					false
+				} else {
+					self.inner() == (*other as $inner)
+				}
+			}
+		}
+		impl Into<$u> for $t {
+			#[inline]
+			fn into(self) -> $u {
+				self.inner() as $u
+			}
+		}
+		impl Into<$i> for $t {
+			#[inline]
+			fn into(self) -> $i {
+				self.inner() as $i
+			}
+		}
+		)*
+	};
+}
+pub(crate) use impl_traits;

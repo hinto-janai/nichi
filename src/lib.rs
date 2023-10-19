@@ -30,7 +30,7 @@
     unreachable_pub,
     single_use_lifetimes,
     variant_size_differences,
-    unused_mut,
+    //unused_mut,
 )]
 #![deny(
     missing_docs,
@@ -48,10 +48,16 @@ pub use date::*;
 mod weekday;
 pub use weekday::*;
 
+mod year;
+pub use year::*;
+
 mod month;
 pub use month::*;
 
 mod day;
 pub use day::*;
+
+mod days_in_year;
+pub use days_in_year::*;
 
 mod macros;

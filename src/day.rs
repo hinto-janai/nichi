@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------------------------------- Use
 use crate::macros::{
-	impl_u8_enum,
+	impl_u8_enum,impl_traits,
 };
 
 //---------------------------------------------------------------------------------------------------- Day
@@ -43,6 +43,11 @@ pub enum Day {
 	TwentyNinth   = 29,
 	Thirtieth     = 30,
 	ThirtyFirst   = 31,
+}
+
+impl_traits!{ Day => u8 |
+	u8,u16,u32,u64,u128,usize |
+	i8,i16,i32,i64,i128,isize
 }
 
 //---------------------------------------------------------------------------------------------------- Impl
@@ -826,6 +831,77 @@ impl Day {
 		}
 	}
 
+	#[inline]
+	/// ```
+	/// # use nichi::*;
+	/// assert_eq!(Day::First.as_str_jp()         , "一日");
+	/// assert_eq!(Day::Second.as_str_jp()        , "二日");
+	/// assert_eq!(Day::Third.as_str_jp()         , "三日");
+	/// assert_eq!(Day::Fourth.as_str_jp()        , "四日");
+	/// assert_eq!(Day::Fifth.as_str_jp()         , "五日");
+	/// assert_eq!(Day::Sixth.as_str_jp()         , "六日");
+	/// assert_eq!(Day::Seventh.as_str_jp()       , "七日");
+	/// assert_eq!(Day::Eighth.as_str_jp()        , "八日");
+	/// assert_eq!(Day::Ninth.as_str_jp()         , "九日");
+	/// assert_eq!(Day::Tenth.as_str_jp()         , "十日");
+	/// assert_eq!(Day::Eleventh.as_str_jp()      , "十一日");
+	/// assert_eq!(Day::Twelfth.as_str_jp()       , "十二日");
+	/// assert_eq!(Day::Thirteenth.as_str_jp()    , "十三日");
+	/// assert_eq!(Day::Fourteenth.as_str_jp()    , "十四日");
+	/// assert_eq!(Day::Fifteenth.as_str_jp()     , "十五日");
+	/// assert_eq!(Day::Sixteenth.as_str_jp()     , "十六日");
+	/// assert_eq!(Day::Seventeenth.as_str_jp()   , "十七日");
+	/// assert_eq!(Day::Eighteenth.as_str_jp()    , "十八日");
+	/// assert_eq!(Day::Nineteenth.as_str_jp()    , "十九日");
+	/// assert_eq!(Day::Twentieth.as_str_jp()     , "二十日");
+	/// assert_eq!(Day::TwentyFirst.as_str_jp()   , "二十一日");
+	/// assert_eq!(Day::TwentySecond.as_str_jp()  , "二十二日");
+	/// assert_eq!(Day::TwentyThird.as_str_jp()   , "二十三日");
+	/// assert_eq!(Day::TwentyFourth.as_str_jp()  , "二十四日");
+	/// assert_eq!(Day::TwentyFifth.as_str_jp()   , "二十五日");
+	/// assert_eq!(Day::TwentySixth.as_str_jp()   , "二十六日");
+	/// assert_eq!(Day::TwentySeventh.as_str_jp() , "二十七日");
+	/// assert_eq!(Day::TwentyEighth.as_str_jp()  , "二十八日");
+	/// assert_eq!(Day::TwentyNinth.as_str_jp()   , "二十九日");
+	/// assert_eq!(Day::Thirtieth.as_str_jp()     , "三十日");
+	/// assert_eq!(Day::ThirtyFirst.as_str_jp()   , "三十一日");
+	/// ```
+	pub const fn as_str_jp(self) -> &'static str {
+		match self {
+			Self::First         => 	"一日",
+			Self::Second        => 	"二日",
+			Self::Third         => 	"三日",
+			Self::Fourth        => 	"四日",
+			Self::Fifth         => 	"五日",
+			Self::Sixth         => 	"六日",
+			Self::Seventh       => 	"七日",
+			Self::Eighth        => 	"八日",
+			Self::Ninth         => 	"九日",
+			Self::Tenth         => 	"十日",
+			Self::Eleventh      => 	"十一日",
+			Self::Twelfth       => 	"十二日",
+			Self::Thirteenth    => 	"十三日",
+			Self::Fourteenth    => 	"十四日",
+			Self::Fifteenth     => 	"十五日",
+			Self::Sixteenth     => 	"十六日",
+			Self::Seventeenth   => 	"十七日",
+			Self::Eighteenth    => 	"十八日",
+			Self::Nineteenth    => 	"十九日",
+			Self::Twentieth     => 	"二十日",
+			Self::TwentyFirst   => 	"二十一日",
+			Self::TwentySecond  => 	"二十二日",
+			Self::TwentyThird   => 	"二十三日",
+			Self::TwentyFourth  => 	"二十四日",
+			Self::TwentyFifth   => 	"二十五日",
+			Self::TwentySixth   => 	"二十六日",
+			Self::TwentySeventh => 	"二十七日",
+			Self::TwentyEighth  => 	"二十八日",
+			Self::TwentyNinth   => 	"二十九日",
+			Self::Thirtieth     => 	"三十日",
+			Self::ThirtyFirst   => 	"三十一日",
+		}
+	}
+
 	/// Create a [`Day`] by parsing a [`&str`]
 	///
 	/// Valid input strings are anything returned by
@@ -898,37 +974,37 @@ impl Day {
 
 		if len <= 4 {
 			match bytes {
-				b"1"  |  b"1st" | b"1ST"  => Some(Day::First),
-				b"2"  |  b"2nd" | b"2ND"  => Some(Day::Second),
-				b"3"  |  b"3rd" | b"3RD"  => Some(Day::Third),
-				b"4"  |  b"4th" | b"4TH"  => Some(Day::Fourth),
-				b"5"  |  b"5th" | b"5TH"  => Some(Day::Fifth),
-				b"6"  |  b"6th" | b"6TH"  => Some(Day::Sixth),
-				b"7"  |  b"7th" | b"7TH"  => Some(Day::Seventh),
-				b"8"  |  b"8th" | b"8TH"  => Some(Day::Eighth),
-				b"9"  |  b"9th" | b"9TH"  => Some(Day::Ninth),
-				b"10" | b"10th" | b"10TH" => Some(Day::Tenth),
-				b"11" | b"11th" | b"11TH" => Some(Day::Eleventh),
-				b"12" | b"12th" | b"12TH" => Some(Day::Twelfth),
-				b"13" | b"13th" | b"13TH" => Some(Day::Thirteenth),
-				b"14" | b"14th" | b"14TH" => Some(Day::Fourteenth),
-				b"15" | b"15th" | b"15TH" => Some(Day::Fifteenth),
-				b"16" | b"16th" | b"16TH" => Some(Day::Sixteenth),
-				b"17" | b"17th" | b"17TH" => Some(Day::Seventeenth),
-				b"18" | b"18th" | b"18TH" => Some(Day::Eighteenth),
-				b"19" | b"19th" | b"19TH" => Some(Day::Nineteenth),
-				b"20" | b"20th" | b"20TH" => Some(Day::Twentieth),
-				b"21" | b"21st" | b"21ST" => Some(Day::TwentyFirst),
-				b"22" | b"22nd" | b"22ND" => Some(Day::TwentySecond),
-				b"23" | b"23rd" | b"23RD" => Some(Day::TwentyThird),
-				b"24" | b"24th" | b"24TH" => Some(Day::TwentyFourth),
-				b"25" | b"25th" | b"25TH" => Some(Day::TwentyFifth),
-				b"26" | b"26th" | b"26TH" => Some(Day::TwentySixth),
-				b"27" | b"27th" | b"27TH" => Some(Day::TwentySeventh),
-				b"28" | b"28th" | b"28TH" => Some(Day::TwentyEighth),
-				b"29" | b"29th" | b"29TH" => Some(Day::TwentyNinth),
-				b"30" | b"30th" | b"30TH" => Some(Day::Thirtieth),
-				b"31" | b"31st" | b"31ST" => Some(Day::ThirtyFirst),
+				b"1"  |  b"1st" | b"1ST"  | b"01"  => Some(Day::First),
+				b"2"  |  b"2nd" | b"2ND"  | b"02"  => Some(Day::Second),
+				b"3"  |  b"3rd" | b"3RD"  | b"03"  => Some(Day::Third),
+				b"4"  |  b"4th" | b"4TH"  | b"04"  => Some(Day::Fourth),
+				b"5"  |  b"5th" | b"5TH"  | b"05"  => Some(Day::Fifth),
+				b"6"  |  b"6th" | b"6TH"  | b"06"  => Some(Day::Sixth),
+				b"7"  |  b"7th" | b"7TH"  | b"07"  => Some(Day::Seventh),
+				b"8"  |  b"8th" | b"8TH"  | b"08"  => Some(Day::Eighth),
+				b"9"  |  b"9th" | b"9TH"  | b"09"  => Some(Day::Ninth),
+				b"10" | b"10th" | b"10TH"          => Some(Day::Tenth),
+				b"11" | b"11th" | b"11TH"          => Some(Day::Eleventh),
+				b"12" | b"12th" | b"12TH"          => Some(Day::Twelfth),
+				b"13" | b"13th" | b"13TH"          => Some(Day::Thirteenth),
+				b"14" | b"14th" | b"14TH"          => Some(Day::Fourteenth),
+				b"15" | b"15th" | b"15TH"          => Some(Day::Fifteenth),
+				b"16" | b"16th" | b"16TH"          => Some(Day::Sixteenth),
+				b"17" | b"17th" | b"17TH"          => Some(Day::Seventeenth),
+				b"18" | b"18th" | b"18TH"          => Some(Day::Eighteenth),
+				b"19" | b"19th" | b"19TH"          => Some(Day::Nineteenth),
+				b"20" | b"20th" | b"20TH"          => Some(Day::Twentieth),
+				b"21" | b"21st" | b"21ST"          => Some(Day::TwentyFirst),
+				b"22" | b"22nd" | b"22ND"          => Some(Day::TwentySecond),
+				b"23" | b"23rd" | b"23RD"          => Some(Day::TwentyThird),
+				b"24" | b"24th" | b"24TH"          => Some(Day::TwentyFourth),
+				b"25" | b"25th" | b"25TH"          => Some(Day::TwentyFifth),
+				b"26" | b"26th" | b"26TH"          => Some(Day::TwentySixth),
+				b"27" | b"27th" | b"27TH"          => Some(Day::TwentySeventh),
+				b"28" | b"28th" | b"28TH"          => Some(Day::TwentyEighth),
+				b"29" | b"29th" | b"29TH"          => Some(Day::TwentyNinth),
+				b"30" | b"30th" | b"30TH"          => Some(Day::Thirtieth),
+				b"31" | b"31st" | b"31ST"          => Some(Day::ThirtyFirst),
 				_ => None,
 			}
 		} else {
@@ -966,6 +1042,46 @@ impl Day {
 				b"ThirtyFirst"   | b"thirtyfirst"   | b"THIRTYFIRST"   => Some(Self::ThirtyFirst),
 				_ => None,
 			}
+		}
+	}
+
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Day::First.inner(), 1);
+	/// ```
+	pub const fn inner(self) -> u8 {
+		match self {
+			Self::First         => 1,
+			Self::Second        => 2,
+			Self::Third         => 3,
+			Self::Fourth        => 4,
+			Self::Fifth         => 5,
+			Self::Sixth         => 6,
+			Self::Seventh       => 7,
+			Self::Eighth        => 8,
+			Self::Ninth         => 9,
+			Self::Tenth         => 10,
+			Self::Eleventh      => 11,
+			Self::Twelfth       => 12,
+			Self::Thirteenth    => 13,
+			Self::Fourteenth    => 14,
+			Self::Fifteenth     => 15,
+			Self::Sixteenth     => 16,
+			Self::Seventeenth   => 17,
+			Self::Eighteenth    => 18,
+			Self::Nineteenth    => 19,
+			Self::Twentieth     => 20,
+			Self::TwentyFirst   => 21,
+			Self::TwentySecond  => 22,
+			Self::TwentyThird   => 23,
+			Self::TwentyFourth  => 24,
+			Self::TwentyFifth   => 25,
+			Self::TwentySixth   => 26,
+			Self::TwentySeventh => 27,
+			Self::TwentyEighth  => 28,
+			Self::TwentyNinth   => 29,
+			Self::Thirtieth     => 30,
+			Self::ThirtyFirst   => 31,
 		}
 	}
 }
