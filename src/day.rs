@@ -178,40 +178,64 @@ impl Day {
 	/// Day::new(32);
 	/// ```
 	pub const fn new(day: u8) -> Self {
-		match day {
-			1  => Self::First,
-			2  => Self::Second,
-			3  => Self::Third,
-			4  => Self::Fourth,
-			5  => Self::Fifth,
-			6  => Self::Sixth,
-			7  => Self::Seventh,
-			8  => Self::Eighth,
-			9  => Self::Ninth,
-			10 => Self::Tenth,
-			11 => Self::Eleventh,
-			12 => Self::Twelfth,
-			13 => Self::Thirteenth,
-			14 => Self::Fourteenth,
-			15 => Self::Fifteenth,
-			16 => Self::Sixteenth,
-			17 => Self::Seventeenth,
-			18 => Self::Eighteenth,
-			19 => Self::Nineteenth,
-			20 => Self::Twentieth,
-			21 => Self::TwentyFirst,
-			22 => Self::TwentySecond,
-			23 => Self::TwentyThird,
-			24 => Self::TwentyFourth,
-			25 => Self::TwentyFifth,
-			26 => Self::TwentySixth,
-			27 => Self::TwentySeventh,
-			28 => Self::TwentyEighth,
-			29 => Self::TwentyNinth,
-			30 => Self::Thirtieth,
-			31 => Self::ThirtyFirst,
-			_  => panic!("day is not in-between 1..=12"),
-		}
+		assert!(day > 0, "day must not be 0");
+		assert!(day < 32, "day must not be > 31");
+		// SAFETY: repr(u8)
+		unsafe { Self::new_unchecked(day) }
+	}
+
+		#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// unsafe {
+	/// 	assert_eq!(Day::new_unchecked(1),  Day::First);
+	/// 	assert_eq!(Day::new_unchecked(2),  Day::Second);
+	/// 	assert_eq!(Day::new_unchecked(3),  Day::Third);
+	/// 	assert_eq!(Day::new_unchecked(4),  Day::Fourth);
+	/// 	assert_eq!(Day::new_unchecked(5),  Day::Fifth);
+	/// 	assert_eq!(Day::new_unchecked(6),  Day::Sixth);
+	/// 	assert_eq!(Day::new_unchecked(7),  Day::Seventh);
+	/// 	assert_eq!(Day::new_unchecked(8),  Day::Eighth);
+	/// 	assert_eq!(Day::new_unchecked(9),  Day::Ninth);
+	/// 	assert_eq!(Day::new_unchecked(10), Day::Tenth);
+	/// 	assert_eq!(Day::new_unchecked(11), Day::Eleventh);
+	/// 	assert_eq!(Day::new_unchecked(12), Day::Twelfth);
+	/// 	assert_eq!(Day::new_unchecked(13), Day::Thirteenth);
+	/// 	assert_eq!(Day::new_unchecked(14), Day::Fourteenth);
+	/// 	assert_eq!(Day::new_unchecked(15), Day::Fifteenth);
+	/// 	assert_eq!(Day::new_unchecked(16), Day::Sixteenth);
+	/// 	assert_eq!(Day::new_unchecked(17), Day::Seventeenth);
+	/// 	assert_eq!(Day::new_unchecked(18), Day::Eighteenth);
+	/// 	assert_eq!(Day::new_unchecked(19), Day::Nineteenth);
+	/// 	assert_eq!(Day::new_unchecked(20), Day::Twentieth);
+	/// 	assert_eq!(Day::new_unchecked(21), Day::TwentyFirst);
+	/// 	assert_eq!(Day::new_unchecked(22), Day::TwentySecond);
+	/// 	assert_eq!(Day::new_unchecked(23), Day::TwentyThird);
+	/// 	assert_eq!(Day::new_unchecked(24), Day::TwentyFourth);
+	/// 	assert_eq!(Day::new_unchecked(25), Day::TwentyFifth);
+	/// 	assert_eq!(Day::new_unchecked(26), Day::TwentySixth);
+	/// 	assert_eq!(Day::new_unchecked(27), Day::TwentySeventh);
+	/// 	assert_eq!(Day::new_unchecked(28), Day::TwentyEighth);
+	/// 	assert_eq!(Day::new_unchecked(29), Day::TwentyNinth);
+	/// 	assert_eq!(Day::new_unchecked(30), Day::Thirtieth);
+	/// 	assert_eq!(Day::new_unchecked(31), Day::ThirtyFirst);
+	/// }
+	/// ```
+	///
+	/// ## Safety
+	/// `day` must be `1..=31`.
+	///
+	/// ```rust,should_panic
+	/// # use nichi::*;
+	/// // ⚠️ Undefined behavior.
+	/// // Will panic on debug.
+	/// unsafe { Day::new_unchecked(0) };
+	/// ```
+	pub const unsafe fn new_unchecked(day: u8) -> Self {
+		debug_assert!(day > 0, "day must not be 0");
+		debug_assert!(day < 32, "day must not be > 31");
+		// SAFETY: repr(u8)
+		std::mem::transmute(day)
 	}
 
 	#[inline]
@@ -261,38 +285,13 @@ impl Day {
 	/// assert_eq!(Day::new_saturating(33),  Day::ThirtyFirst);
 	/// ```
 	pub const fn new_saturating(day: u8) -> Self {
-		match day {
-			0|1 => Self::First,
-			2   => Self::Second,
-			3   => Self::Third,
-			4   => Self::Fourth,
-			5   => Self::Fifth,
-			6   => Self::Sixth,
-			7   => Self::Seventh,
-			8   => Self::Eighth,
-			9   => Self::Ninth,
-			10  => Self::Tenth,
-			11  => Self::Eleventh,
-			12  => Self::Twelfth,
-			13  => Self::Thirteenth,
-			14  => Self::Fourteenth,
-			15  => Self::Fifteenth,
-			16  => Self::Sixteenth,
-			17  => Self::Seventeenth,
-			18  => Self::Eighteenth,
-			19  => Self::Nineteenth,
-			20  => Self::Twentieth,
-			21  => Self::TwentyFirst,
-			22  => Self::TwentySecond,
-			23  => Self::TwentyThird,
-			24  => Self::TwentyFourth,
-			25  => Self::TwentyFifth,
-			26  => Self::TwentySixth,
-			27  => Self::TwentySeventh,
-			28  => Self::TwentyEighth,
-			29  => Self::TwentyNinth,
-			30  => Self::Thirtieth,
-			_   => Self::ThirtyFirst,
+		if day == 0 {
+			Self::FIRST
+		} else if day < 31 {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(day) }
+		} else {
+			Self::LAST
 		}
 	}
 
@@ -368,38 +367,12 @@ impl Day {
 	/// assert_eq!(Day::new_wrapping(62), Day::ThirtyFirst);
 	/// ```
 	pub const fn new_wrapping(day: u8) -> Self {
-		match day % 31 {
-			1  => Self::First,
-			2  => Self::Second,
-			3  => Self::Third,
-			4  => Self::Fourth,
-			5  => Self::Fifth,
-			6  => Self::Sixth,
-			7  => Self::Seventh,
-			8  => Self::Eighth,
-			9  => Self::Ninth,
-			10 => Self::Tenth,
-			11 => Self::Eleventh,
-			12 => Self::Twelfth,
-			13 => Self::Thirteenth,
-			14 => Self::Fourteenth,
-			15 => Self::Fifteenth,
-			16 => Self::Sixteenth,
-			17 => Self::Seventeenth,
-			18 => Self::Eighteenth,
-			19 => Self::Nineteenth,
-			20 => Self::Twentieth,
-			21 => Self::TwentyFirst,
-			22 => Self::TwentySecond,
-			23 => Self::TwentyThird,
-			24 => Self::TwentyFourth,
-			25 => Self::TwentyFifth,
-			26 => Self::TwentySixth,
-			27 => Self::TwentySeventh,
-			28 => Self::TwentyEighth,
-			29 => Self::TwentyNinth,
-			30 => Self::Thirtieth,
-			_  => Self::ThirtyFirst,
+		let day = day % 31;
+		if day == 0 {
+			Self::LAST
+		} else {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(day) }
 		}
 	}
 
@@ -1055,42 +1028,41 @@ impl Day {
 
 	/// ```rust
 	/// # use nichi::*;
-	/// assert_eq!(Day::First.inner(), 1);
+	/// assert_eq!(Day::First.inner()         , 1);
+	/// assert_eq!(Day::Second.inner()        , 2);
+	/// assert_eq!(Day::Third.inner()         , 3);
+	/// assert_eq!(Day::Fourth.inner()        , 4);
+	/// assert_eq!(Day::Fifth.inner()         , 5);
+	/// assert_eq!(Day::Sixth.inner()         , 6);
+	/// assert_eq!(Day::Seventh.inner()       , 7);
+	/// assert_eq!(Day::Eighth.inner()        , 8);
+	/// assert_eq!(Day::Ninth.inner()         , 9);
+	/// assert_eq!(Day::Tenth.inner()         , 10);
+	/// assert_eq!(Day::Eleventh.inner()      , 11);
+	/// assert_eq!(Day::Twelfth.inner()       , 12);
+	/// assert_eq!(Day::Thirteenth.inner()    , 13);
+	/// assert_eq!(Day::Fourteenth.inner()    , 14);
+	/// assert_eq!(Day::Fifteenth.inner()     , 15);
+	/// assert_eq!(Day::Sixteenth.inner()     , 16);
+	/// assert_eq!(Day::Seventeenth.inner()   , 17);
+	/// assert_eq!(Day::Eighteenth.inner()    , 18);
+	/// assert_eq!(Day::Nineteenth.inner()    , 19);
+	/// assert_eq!(Day::Twentieth.inner()     , 20);
+	/// assert_eq!(Day::TwentyFirst.inner()   , 21);
+	/// assert_eq!(Day::TwentySecond.inner()  , 22);
+	/// assert_eq!(Day::TwentyThird.inner()   , 23);
+	/// assert_eq!(Day::TwentyFourth.inner()  , 24);
+	/// assert_eq!(Day::TwentyFifth.inner()   , 25);
+	/// assert_eq!(Day::TwentySixth.inner()   , 26);
+	/// assert_eq!(Day::TwentySeventh.inner() , 27);
+	/// assert_eq!(Day::TwentyEighth.inner()  , 28);
+	/// assert_eq!(Day::TwentyNinth.inner()   , 29);
+	/// assert_eq!(Day::Thirtieth.inner()     , 30);
+	/// assert_eq!(Day::ThirtyFirst.inner()   , 31);
 	/// ```
 	pub const fn inner(self) -> u8 {
-		match self {
-			Self::First         => 1,
-			Self::Second        => 2,
-			Self::Third         => 3,
-			Self::Fourth        => 4,
-			Self::Fifth         => 5,
-			Self::Sixth         => 6,
-			Self::Seventh       => 7,
-			Self::Eighth        => 8,
-			Self::Ninth         => 9,
-			Self::Tenth         => 10,
-			Self::Eleventh      => 11,
-			Self::Twelfth       => 12,
-			Self::Thirteenth    => 13,
-			Self::Fourteenth    => 14,
-			Self::Fifteenth     => 15,
-			Self::Sixteenth     => 16,
-			Self::Seventeenth   => 17,
-			Self::Eighteenth    => 18,
-			Self::Nineteenth    => 19,
-			Self::Twentieth     => 20,
-			Self::TwentyFirst   => 21,
-			Self::TwentySecond  => 22,
-			Self::TwentyThird   => 23,
-			Self::TwentyFourth  => 24,
-			Self::TwentyFifth   => 25,
-			Self::TwentySixth   => 26,
-			Self::TwentySeventh => 27,
-			Self::TwentyEighth  => 28,
-			Self::TwentyNinth   => 29,
-			Self::Thirtieth     => 30,
-			Self::ThirtyFirst   => 31,
-		}
+		// SAFETY: repr(u8)
+		unsafe { std::mem::transmute(self) }
 	}
 }
 

@@ -61,3 +61,9 @@ mod days_in_year;
 pub use days_in_year::*;
 
 mod macros;
+
+mod free;
+pub use free::*;
+
+mod days_in_month;
+pub use days_in_month::*;

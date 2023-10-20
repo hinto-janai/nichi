@@ -101,21 +101,45 @@ impl Month {
 	/// Month::new(13);
 	/// ```
 	pub const fn new(month: u8) -> Self {
-		match month {
-			1  => Self::January,
-			2  => Self::February,
-			3  => Self::March,
-			4  => Self::April,
-			5  => Self::May,
-			6  => Self::June,
-			7  => Self::July,
-			8  => Self::August,
-			9  => Self::September,
-			10 => Self::October,
-			11 => Self::November,
-			12 => Self::December,
-			_  => panic!("month is not in-between 1..=12"),
-		}
+		assert!(month != 0, "month must not be 0");
+		assert!(month < 13, "month must not be > 12");
+		// SAFETY: repr(u8)
+		unsafe { Self::new_unchecked(month) }
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// unsafe {
+	/// 	assert_eq!(Month::new_unchecked(1),  Month::January);
+	/// 	assert_eq!(Month::new_unchecked(2),  Month::February);
+	/// 	assert_eq!(Month::new_unchecked(3),  Month::March);
+	/// 	assert_eq!(Month::new_unchecked(4),  Month::April);
+	/// 	assert_eq!(Month::new_unchecked(5),  Month::May);
+	/// 	assert_eq!(Month::new_unchecked(6),  Month::June);
+	/// 	assert_eq!(Month::new_unchecked(7),  Month::July);
+	/// 	assert_eq!(Month::new_unchecked(8),  Month::August);
+	/// 	assert_eq!(Month::new_unchecked(9),  Month::September);
+	/// 	assert_eq!(Month::new_unchecked(10), Month::October);
+	/// 	assert_eq!(Month::new_unchecked(11), Month::November);
+	/// 	assert_eq!(Month::new_unchecked(12), Month::December);
+	/// }
+	/// ```
+	///
+	/// ## Safety
+	/// `month` must be `1..=12`.
+	///
+	/// ```rust,should_panic
+	/// # use nichi::*;
+	/// // ⚠️ Undefined behavior.
+	/// // Will panic on debug.
+	/// unsafe { Month::new_unchecked(0) };
+	/// ```
+	pub const unsafe fn new_unchecked(month: u8) -> Self {
+		debug_assert!(month != 0, "month must not be 0");
+		debug_assert!(month < 13, "month must not be > 12");
+		// SAFETY: repr(u8)
+		std::mem::transmute(month)
 	}
 
 	#[inline]
@@ -146,19 +170,13 @@ impl Month {
 	/// assert_eq!(Month::new_saturating(14), Month::December);
 	/// ```
 	pub const fn new_saturating(month: u8) -> Self {
-		match month {
-			0|1 => Self::January,
-			2   => Self::February,
-			3   => Self::March,
-			4   => Self::April,
-			5   => Self::May,
-			6   => Self::June,
-			7   => Self::July,
-			8   => Self::August,
-			9   => Self::September,
-			10  => Self::October,
-			11  => Self::November,
-			_   => Self::December,
+		if month == 0 {
+			Self::FIRST
+		} else if month < 12 {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(month) }
+		} else {
+			Self::LAST
 		}
 	}
 
@@ -196,19 +214,12 @@ impl Month {
 	/// assert_eq!(Month::new_wrapping(24), Month::December);
 	/// ```
 	pub const fn new_wrapping(month: u8) -> Self {
-		match month % 12 {
-			1  => Self::January,
-			2  => Self::February,
-			3  => Self::March,
-			4  => Self::April,
-			5  => Self::May,
-			6  => Self::June,
-			7  => Self::July,
-			8  => Self::August,
-			9  => Self::September,
-			10 => Self::October,
-			11 => Self::November,
-			_  => Self::December,
+		let month = month % 12;
+		if month == 0 {
+			Self::LAST
+		} else {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(month) }
 		}
 	}
 
@@ -660,20 +671,8 @@ impl Month {
 	/// assert_eq!(Month::December.inner(),  12);
 	/// ```
 	pub const fn inner(self) -> u8 {
-		match self {
-			Self::January   => 1,
-			Self::February  => 2,
-			Self::March     => 3,
-			Self::April     => 4,
-			Self::May       => 5,
-			Self::June      => 6,
-			Self::July      => 7,
-			Self::August    => 8,
-			Self::September => 9,
-			Self::October   => 10,
-			Self::November  => 11,
-			Self::December  => 12,
-		}
+		// SAFETY: repr(u8)
+		unsafe { std::mem::transmute(self) }
 	}
 }
 

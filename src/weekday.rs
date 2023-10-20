@@ -77,16 +77,56 @@ impl Weekday {
 	/// Weekday::new(8);
 	/// ```
 	pub const fn new(weekday: u8) -> Self {
-		match weekday {
-			1 => Self::Sunday,
-			2 => Self::Monday,
-			3 => Self::Tuesday,
-			4 => Self::Wednesday,
-			5 => Self::Thursday,
-			6 => Self::Friday,
-			7 => Self::Saturday,
-			_ => panic!("weekday is not in-between 1..=7"),
-		}
+		assert!(weekday != 0, "weekday must not be 0");
+		assert!(weekday < 8, "weekday must not be > 7");
+		// SAFETY: repr(u8)
+		unsafe { Self::new_unchecked(weekday) }
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// unsafe {
+	/// 	assert_eq!(Weekday::new_unchecked(1), Weekday::Sunday);
+	/// 	assert_eq!(Weekday::new_unchecked(2), Weekday::Monday);
+	/// 	assert_eq!(Weekday::new_unchecked(3), Weekday::Tuesday);
+	/// 	assert_eq!(Weekday::new_unchecked(4), Weekday::Wednesday);
+	/// 	assert_eq!(Weekday::new_unchecked(5), Weekday::Thursday);
+	/// 	assert_eq!(Weekday::new_unchecked(6), Weekday::Friday);
+	/// 	assert_eq!(Weekday::new_unchecked(7), Weekday::Saturday);
+	/// }
+	/// ```
+	///
+	/// ## Safety
+	/// `weekday` must be `1..=7`.
+	///
+	/// ```rust,should_panic
+	/// # use nichi::*;
+	/// // ⚠️ Undefined behavior.
+	/// // Will panic on debug.
+	/// unsafe { Weekday::new_unchecked(8) };
+	/// ```
+	pub const unsafe fn new_unchecked(weekday: u8) -> Self {
+		debug_assert!(weekday != 0, "weekday must not be 0");
+		debug_assert!(weekday < 8, "weekday must not be > 7");
+		// SAFETY: repr(u8)
+		std::mem::transmute(weekday)
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(Weekday::Sunday.inner(),    1);
+	/// assert_eq!(Weekday::Monday.inner(),    2);
+	/// assert_eq!(Weekday::Tuesday.inner(),   3);
+	/// assert_eq!(Weekday::Wednesday.inner(), 4);
+	/// assert_eq!(Weekday::Thursday.inner(),  5);
+	/// assert_eq!(Weekday::Friday.inner(),    6);
+	/// assert_eq!(Weekday::Saturday.inner(),  7);
+	/// ```
+	pub const fn inner(self) -> u8 {
+		// SAFETY: repr(u8)
+		unsafe { std::mem::transmute(self) }
 	}
 
 	#[inline]
@@ -113,14 +153,13 @@ impl Weekday {
 	/// assert_eq!(Weekday::new_saturating(9), Weekday::Saturday);
 	/// ```
 	pub const fn new_saturating(weekday: u8) -> Self {
-		match weekday {
-			0|1 => Self::Sunday,
-			2   => Self::Monday,
-			3   => Self::Tuesday,
-			4   => Self::Wednesday,
-			5   => Self::Thursday,
-			6   => Self::Friday,
-			_   => Self::Saturday,
+		if weekday == 0 {
+			Self::FIRST
+		} else if weekday < 8 {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(weekday) }
+		} else {
+			Self::LAST
 		}
 	}
 
@@ -148,14 +187,12 @@ impl Weekday {
 	/// assert_eq!(Weekday::new_wrapping(14), Weekday::Saturday);
 	/// ```
 	pub const fn new_wrapping(weekday: u8) -> Self {
-		match weekday % 7 {
-			1 => Self::Sunday,
-			2 => Self::Monday,
-			3 => Self::Tuesday,
-			4 => Self::Wednesday,
-			5 => Self::Thursday,
-			6 => Self::Friday,
-			_ => Self::Saturday,
+		let weekday = weekday % 7;
+		if weekday == 0 {
+			Self::LAST
+		} else {
+			// SAFETY: repr(u8)
+			unsafe { Self::new_unchecked(weekday) }
 		}
 	}
 

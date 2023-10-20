@@ -41,6 +41,32 @@ impl DaysInYear {
 	#[inline]
 	/// ```rust
 	/// # use nichi::*;
+	/// assert_eq!(DaysInYear::ThreeSixFive.is_365(), true);
+	/// assert_eq!(DaysInYear::ThreeSixSix.is_365(),  false);
+	/// ```
+	pub const fn is_365(self) -> bool {
+		match self {
+			Self::ThreeSixFive => true,
+			Self::ThreeSixSix => false,
+		}
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
+	/// assert_eq!(DaysInYear::ThreeSixFive.is_366(), false);
+	/// assert_eq!(DaysInYear::ThreeSixSix.is_366(),  true);
+	/// ```
+	pub const fn is_366(self) -> bool {
+		match self {
+			Self::ThreeSixFive => false,
+			Self::ThreeSixSix => true,
+		}
+	}
+
+	#[inline]
+	/// ```rust
+	/// # use nichi::*;
 	/// assert_eq!(DaysInYear::ThreeSixFive.as_str(), "ThreeSixFive");
 	/// assert_eq!(DaysInYear::ThreeSixSix.as_str(),  "ThreeSixSix");
 	/// ```

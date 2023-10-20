@@ -10,7 +10,7 @@ use nichi::*;
 // PartialEq.
 let date1 = Date::new(2000, 12, 25);
 let date2 = Date::new_typed(
-	Year(2000_u16),
+	Year(2000),
 	Month::December,
 	Day::TwentyFifth,
 );
@@ -24,6 +24,14 @@ use nichi::*;
 
 // Christmas in 2000 was on a Monday.
 assert_eq!(Date::new(2000, 12, 25).weekday(), Weekday::Monday);
+```
+
+## Unix calculation
+```rust
+# use nichi::*;
+let date = Date::new(2023, 10, 20);
+assert_eq!(date.as_unix(), 1697760000);
+assert_eq!(date, Date::from_unix(date.as_unix()));
 ```
 
 ## String parsing

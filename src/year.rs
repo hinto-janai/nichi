@@ -16,10 +16,11 @@ use crate::day::Day;
 use crate::month::Month;
 use crate::weekday::Weekday;
 use crate::days_in_year::DaysInYear;
+use crate::days_in_month::DaysInMonth;
 use crate::macros::impl_traits;
 
 //---------------------------------------------------------------------------------------------------- Year
-/// Any year from `0` to `65,535`
+/// Any year from `-32,768` to `32,767`
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "bincode", derive(bincode::Encode, bincode::Decode))]
 #[derive(Copy,Clone,Debug,Default,PartialEq,PartialOrd,Eq,Ord,Hash)]
@@ -35,9 +36,9 @@ use crate::macros::impl_traits;
 	AddAssign,
 	MulAssign,
 )]
-pub struct Year(pub u16);
+pub struct Year(pub i16);
 
-impl_traits!{ Year => u16 |
+impl_traits!{ Year => i16 |
 	u8,u16,u32,u64,u128,usize |
 	i8,i16,i32,i64,i128,isize
 }
@@ -46,24 +47,24 @@ impl_traits!{ Year => u16 |
 impl Year {
 	/// ```rust
 	/// # use nichi::*;
-	/// assert_eq!(Year::MAX, Year(u16::MAX));
+	/// assert_eq!(Year::MAX, Year(i16::MAX));
 	/// ```
-	pub const MAX: Year = Year(u16::MAX);
+	pub const MAX: Year = Year(i16::MAX);
 	/// ```rust
 	/// # use nichi::*;
-	/// assert_eq!(Year::MIN, Year(u16::MIN));
+	/// assert_eq!(Year::MIN, Year(i16::MIN));
 	/// ```
-	pub const MIN: Year = Year(u16::MIN);
+	pub const MIN: Year = Year(i16::MIN);
 
 	#[inline]
 	/// ```rust
 	/// # use nichi::*;
-	/// assert!(!Year(2019).is_leap_year());
-	/// assert!(Year(2020).is_leap_year());
-	/// assert!(!Year(2023).is_leap_year());
-	/// assert!(Year(2024).is_leap_year());
+	/// assert!(!Year(2019).is_leap());
+	/// assert!(Year(2020).is_leap());
+	/// assert!(!Year(2023).is_leap());
+	/// assert!(Year(2024).is_leap());
 	/// ```
-	pub const fn is_leap_year(self) -> bool {
+	pub const fn is_leap(self) -> bool {
 		(self.0 % 4 == 0 && self.0 % 100 != 0) || self.0 % 400 == 0
 	}
 
@@ -76,7 +77,7 @@ impl Year {
 	/// assert_eq!(Year(2020).days_in_year(), 366);
 	/// ```
 	pub const fn days_in_year(self) -> DaysInYear {
-		if self.is_leap_year() {
+		if self.is_leap() {
 			DaysInYear::ThreeSixSix
 		} else {
 			DaysInYear::ThreeSixFive
@@ -88,37 +89,37 @@ impl Year {
 	/// # use nichi::*;
 	/// assert_eq!(
 	/// 	Year(2019).days_in_month(Month::January),
-	/// 	Day::ThirtyFirst,
+	/// 	DaysInMonth::ThirtyOne,
 	/// );
 	///
 	/// assert_eq!(
 	/// 	Year(2019).days_in_month(Month::April),
-	/// 	Day::Thirtieth,
+	/// 	DaysInMonth::Thirty,
 	/// );
 	///
 	/// assert_eq!(
 	/// 	Year(2019).days_in_month(Month::February),
-	/// 	Day::TwentyEighth,
+	/// 	DaysInMonth::TwentyEight,
 	/// );
 	///
 	/// // Leap Year
 	/// assert_eq!(
 	/// 	Year(2020).days_in_month(Month::February),
-	/// 	Day::TwentyNinth,
+	/// 	DaysInMonth::TwentyNine,
 	/// );
 	/// ```
-	pub const fn days_in_month(self, month: Month) -> Day {
+	pub const fn days_in_month(self, month: Month) -> DaysInMonth {
 		use Month as M;
 		match month {
 			M::January|M::March|M::May|M::July|
-			M::August|M::October |M::December => Day::ThirtyFirst,
+			M::August|M::October |M::December => DaysInMonth::ThirtyOne,
 
-			M::April|M::June|M::September|M::November => Day::Thirtieth,
+			M::April|M::June|M::September|M::November => DaysInMonth::Thirty,
 
-			M::February => if self.is_leap_year() {
-				Day::TwentyNinth
+			M::February => if self.is_leap() {
+				DaysInMonth::TwentyNine
 			} else {
-				Day::TwentyEighth
+				DaysInMonth::TwentyEight
 			}
 		}
 	}
@@ -128,19 +129,20 @@ impl Year {
 	/// # use nichi::*;
 	/// assert_eq!(Year(2000).inner(), 2000);
 	/// ```
-	pub const fn inner(self) -> u16 {
+	pub const fn inner(self) -> i16 {
 		self.0
 	}
 
 	#[inline]
 	/// ```rust
 	/// # use nichi::*;
+	/// assert_eq!(Year::from_str("-32768").unwrap(), Year(-32768));
 	/// assert_eq!(Year::from_str("0").unwrap(),     Year(0));
 	/// assert_eq!(Year::from_str("2000").unwrap(),  Year(2000));
-	/// assert_eq!(Year::from_str("65535").unwrap(), Year(65535));
+	/// assert_eq!(Year::from_str("32767").unwrap(), Year(32767));
 	/// ```
 	pub fn from_str(s: &str) -> Option<Self> {
-		match s.parse::<u16>() {
+		match s.parse::<i16>() {
 			Ok(u) => Some(Year(u)),
 			_ => None,
 		}
@@ -157,13 +159,13 @@ macro_rules! impl_f {
 					return Self(0);
 				}
 
-				if f > u16::MAX as $from {
+				if f > i16::MAX as $from {
 					return Self::MAX;
-				} else if f.is_sign_negative() {
+				} else if f < i16::MIN as $from {
 					return Self::MIN;
 				}
 
-				Self(f as u16)
+				Self(f as i16)
 			}
 		}
 		impl From<&$from> for Year {
@@ -183,10 +185,10 @@ macro_rules! impl_u {
 		impl From<$from> for Year {
 			#[inline]
 			fn from(year: $from) -> Self {
-				if year > u16::MAX as $from {
+				if year > i16::MAX as $from {
 					return Self::MAX;
 				}
-				Self(year as u16)
+				Self(year as i16)
 			}
 		}
 		impl From<&$from> for Year {
@@ -209,12 +211,10 @@ macro_rules! impl_i {
 		impl From<$from> for Year {
 			#[inline]
 			fn from(year: $from) -> Self {
-				if year.is_negative() {
-					return Self::MIN;
-				} else if year > u16::MAX as $from {
+				if year > i16::MAX as $from {
 					return Self::MAX;
 				}
-				Self(year as u16)
+				Self(year as i16)
 
 			}
 		}
@@ -227,7 +227,6 @@ macro_rules! impl_i {
 	}
 }
 impl_i!(i8);
-impl_i!(i16);
 impl_i!(i32);
 impl_i!(i64);
 impl_i!(i128);
