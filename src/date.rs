@@ -335,8 +335,6 @@ impl Date {
 				let day   = Day::from_bytes(&b[7..8]).unwrap();
 				return Some(Self { year: Year(year), month, day })
 			}
-
-			unreachable!("iso format matches but could not be parsed");
 		}
 
 		// Year.
