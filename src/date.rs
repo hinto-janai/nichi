@@ -288,10 +288,10 @@ impl Date {
 
 		// ISO 8601
 		static ISO: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1,2}.\d{1,2}").unwrap());
-		static ISO_1: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{2}.\d{2}").unwrap());
-		static ISO_2: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1}.\d{2}").unwrap());
-		static ISO_3: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{2}.\d{1}").unwrap());
-		static ISO_4: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.\d{1}.\d{1}").unwrap());
+		static ISO_1: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.(0[1-9]|1[012]).(0[1-9]|[12][0-9]|30|31)").unwrap());
+		static ISO_2: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.[1-9].(0[1-9]|[12][0-9]|30|31)").unwrap());
+		static ISO_3: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.(0[1-9]|1[012]).[1-9]").unwrap());
+		static ISO_4: Lazy<Regex> = Lazy::new(|| Regex::new(r"[1-9]\d{3}.[1-9].[1-9]").unwrap());
 
 		// If ISO matches, attempt that first.
 		if ISO.is_match(s) {
