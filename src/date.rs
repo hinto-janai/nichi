@@ -124,10 +124,18 @@ impl Date {
 
 	#[inline]
 	/// Same as [`Date::weekday`] but with raw number primitives
+	///
+	/// # Panics
+	/// This function panics if:
+	/// - `month` is not `1..=12`
+	/// - `day` is not `1..=31`
 	pub const fn weekday_raw(year: i16, month: u8, day: u8) -> Weekday {
-		let month: isize = month as isize - 1;
-		debug_assert!(month >= 0);
-		debug_assert!(month < 12);
+		assert!(month != 0, "month was 0");
+		assert!(month < 13, "month was greater than 13");
+		assert!(day != 0, "day was 0");
+		assert!(day < 32, "day was greater than 31");
+
+		let month: usize = month as usize - 1;
 
 		let year = if month < 2 {
 			year.saturating_sub(1)
@@ -136,18 +144,15 @@ impl Date {
 		};
 
 		const LUT: [i16; 12] = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
-
-		// SAFETY: indexing is not const, so we must
-		// "index" by using pointer offsetting.
-		let lut: i16 = unsafe { std::ptr::read(LUT.as_ptr().offset(month)) };
-		debug_assert!(lut < 12);
+		// SAFETY: `month` is now 0..=11, will never panic.
+		let lut: i16 = LUT[month as usize];
 
 		let weekday: i16 = (year + year/4 - year/100 + year/400 + lut + day as i16) % 7;
-		debug_assert!(weekday < 7);
+		assert!(weekday >= 0);
+		assert!(weekday < 7);
 
-		// SAFETY: indexing is not const, so we must
-		// "index" by using pointer offsetting.
-		unsafe { std::ptr::read(Weekday::ALL.as_ptr().offset(weekday as isize)) }
+		// SAFETY: `weekday` is `0..=7`
+		Weekday::ALL[weekday as usize]
 	}
 
 	/// ```rust
@@ -446,6 +451,7 @@ r"Jan|jan|JAN|Feb|feb|FEB|Mar|mar|MAR|Apr|apr|APR|Jun|jun|JUN|Jul|jul|JUL|Aug|au
 			Year(y as i16)
 		};
 
+		// SAFETY: algorithm above is assumed to not produce invalid values
 		unsafe { Self {
 			year: y,
 			month: Month::new_unchecked(m),
